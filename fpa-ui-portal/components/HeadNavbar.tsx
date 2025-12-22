@@ -16,7 +16,7 @@ const AppTopNavbar = ({ isAuthenticated = true }: { isAuthenticated?: boolean })
         <div className="flex items-center gap-2">
           {isAuthenticated}
           <Image
-              src={`${STATIC_COPILOT_URL}/images/darklogo.png`}
+              src={`${STATIC_COPILOT_URL}/images/MIA-Finance.png`}
               alt="FPA Intelligeni Logo"
               width={300}
               height={300}

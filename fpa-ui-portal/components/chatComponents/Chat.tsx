@@ -12,6 +12,7 @@ import {
   X,
   PanelRight,
   Sparkles,
+  Loader2,
 } from "lucide-react";
 import DataTable from "./DataTable";
 import CustomizableGraph from "./../queryComponents/customizableGraph";
@@ -266,7 +267,7 @@ export default function Chat({ initialChatId, initialMessages }: { initialChatId
                   };
 
                   responseContent = `Here are the results for: "${lastSubmittedQueryRef.current}"`;
-                  insightsContent = message?.content || "No Insights generated!";
+                  insightsContent = "";
                   // Save assistant message
                   if (user_id && token) {
                     await saveChatMessage({
@@ -501,8 +502,11 @@ export default function Chat({ initialChatId, initialMessages }: { initialChatId
                   >
                     {msg?.role === "assistant" && "responseContent" in msg ? (
                       <div>
-                        <div>{msg.responseContent}</div>
-
+                        {msg.hasDataButtons ? (
+                          <div className="mb-2">{msg.responseContent}</div>
+                        ) : (
+                          <Insights insights={msg.responseContent || ""} hideHeader={true} />
+                        )}
                         {/* Button to open artifacts/Results drawer */}
                         {msg?.hasDataButtons && (
                           <div className="flex flex-wrap mt-2 mb-2 gap-2">
@@ -524,7 +528,11 @@ export default function Chat({ initialChatId, initialMessages }: { initialChatId
                             </Button>
 
                             <Button
-                              onClick={() => append({ role: "user", content: "Generate insights for the data above." })}
+                              onClick={() => {
+                                setLoading(true);
+                                append({ role: "user", content: "Generate insights for the data above." });
+                              }}
+                              disabled={loading}
                               variant="outline"
                               size="sm"
                               className={cn(
@@ -532,15 +540,19 @@ export default function Chat({ initialChatId, initialMessages }: { initialChatId
                                 "bg-[var(--color-bg-dark)] border border-neutral-700 text-[var(--color-text-light)] hover:bg-[var(--color-button-highlight)] hover:text-[var(--color-text-highlight)]"
                               )}
                             >
-                              <Sparkles className="h-4 w-4 mr-1" />
-                              Generate Insights
+                              {loading ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                                  Generating...
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="h-4 w-4 mr-1" />
+                                  Generate Insights
+                                </>
+                              )}
                             </Button>
                           </div>
-                        )}
-
-                        {/* Insights after the buttons */}
-                        {msg.insightsContent && (
-                          <Insights insights={msg.insightsContent} />
                         )}
                       </div>
                     ) : (
