@@ -11,7 +11,7 @@ export function SidebarToggle() {
             <TooltipTrigger asChild>
                 <button
                     onClick={toggleSidebar}
-                    className="p-2 ml-2 mt-2 rounded-full hover:bg-neutral-800 text-[var(--color-text-light)] transition-colors"
+                    className="p-2 rounded-full hover:bg-neutral-800 text-[var(--color-text-light)] transition-colors"
                     aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
                 >
                     <Menu size={20} />

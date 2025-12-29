@@ -39,7 +39,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <>
       {isPending && <FullScreenLoader />}
       <Sidebar collapsible="icon" className="border-r border-neutral-800 bg-[var(--color-bg-dark)] text-[var(--color-text-light)]" {...props}>
-        <SidebarHeader className="h-16 flex items-center justify-center border-neutral-800/50">
+        <SidebarHeader className="h-16 flex flex-row items-center justify-start border-neutral-800/50">
         <SidebarToggle />
            
         </SidebarHeader>
@@ -55,8 +55,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   tooltip="New Chat"
                   className="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 group-data-[collapsible=icon]:bg-transparent"
                 >
-                  <PlusCircle className="mr-2" />
-                  <span>New Chat</span>
+                  <PlusCircle />
+                  <span >New Chat</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 

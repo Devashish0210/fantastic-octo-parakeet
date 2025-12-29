@@ -27,7 +27,7 @@ export default function Insights({ insights, hideHeader = false }: InsightsProps
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="mx-auto pb-6"
+      className="mx-auto"
     >
       {!hideHeader && (
         <div className="flex justify-between my-4">

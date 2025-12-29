@@ -40,6 +40,7 @@ interface BotMessage {
     tableData?: { columns: string[]; rows: any[][] } | null;
     graphData?: { data: any; type?: string } | null;
     codeData?: string | null;
+    insightsData?: string | null;
   };
 }
 
@@ -54,6 +55,7 @@ export default function Chat({ initialChatId, initialMessages }: { initialChatId
   const [dbLoading, setDbLoading] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
   const lastSubmittedQueryRef = useRef<string>("");
+  const [insightsLoadingMap, setInsightsLoadingMap] = useState<Record<number, boolean>>({});
 
   // Add state for chat_id and user_id
   const [chat_id, setChatId] = useState<string | undefined>(initialChatId);
@@ -251,6 +253,78 @@ export default function Chat({ initialChatId, initialMessages }: { initialChatId
     handleSubmit(e as any);
   };
 
+  const handleGenerateInsights = async (index: number) => {
+    setInsightsLoadingMap((prev) => ({ ...prev, [index]: true }));
+
+    try {
+      const currentHistory = botMessages.slice(0, index + 1).map((m) => ({
+        role: m.role,
+        content: m.content as string,
+      }));
+      const messagesPayload = [
+        ...currentHistory,
+        { role: "user", content: "Generate insights for the data above." },
+      ];
+
+      const response = await fetch("/copilot/fpa-chat/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: messagesPayload,
+          db_connection_id: selectedDatabaseId,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch insights");
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+      let accumulatedText = "";
+
+      while (!done && reader) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        if (value) {
+          accumulatedText += decoder.decode(value, { stream: true });
+        }
+      }
+
+      // Parse Vercel AI SDK stream format (e.g., 0:"text")
+      const cleanText = accumulatedText
+        .split("\n")
+        .filter(line => line.startsWith("0:")) // Only process text parts
+        .map((line) => {
+          try {
+            // The format is 0:"content", so we slice off the first 2 chars and parse the JSON string
+            return JSON.parse(line.substring(2));
+          } catch (e) {
+            console.warn("Failed to parse line:", line);
+            return "";
+          }
+        })
+        .join("");
+
+      setBotMessages((prev) => {
+        const newMessages = [...prev];
+        // Ensure we handle the update immutably for React to detect the change
+        if (newMessages[index]) {
+            const updatedMessage = { ...newMessages[index] };
+            updatedMessage.artifacts = {
+              ...(updatedMessage.artifacts || {}),
+              insightsData: cleanText
+            };
+            newMessages[index] = updatedMessage;
+        }
+        return newMessages;
+      });
+    } catch (error) {
+      console.error("Error generating insights:", error);
+    } finally {
+      setInsightsLoadingMap((prev) => ({ ...prev, [index]: false }));
+    }
+  };
+
   // Function to handle key down events for input
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -310,12 +384,12 @@ export default function Chat({ initialChatId, initialMessages }: { initialChatId
             >
               {/* All messages aligned to the left */}
               <div className={cn("flex w-full", msg.role === "user" ? "justify-end" : "justify-start")}>
-                <div className={cn("flex items-start max-w-[80%]", msg.role === "user" ? "flex-row-reverse" : "flex-row")}>
+                <div className={cn("flex items-start", msg.role === "user" ? "max-w-[80%] flex-row-reverse" : "w-[90%] flex-row")}>
                   <div
                     className={cn(
                       "p-2 md:p-3 rounded-2xl text-sm md:text-base break-words w-full",
                       msg?.role === "user"
-                        ? "bg-[var(--color-button-highlight)] text-[var(--color-text-highlight)] rounded-tl-none"
+                        ? "bg-[var(--color-button-highlight)] text-white rounded-tl-none"
                         : "bg-neutral-800 text-[var(--color-text-light)]"
                     )}
                   >
@@ -324,37 +398,13 @@ export default function Chat({ initialChatId, initialMessages }: { initialChatId
                         <Insights insights={msg.content as string} hideHeader={true} />
                         
                         {/* Artifacts rendered inline */}
-                        {msg.artifacts && <ChatArtifacts {...msg.artifacts} />}
-
-                        {/* Actions */}
                         {msg.artifacts && (
-                          <div className="flex flex-wrap mt-2 mb-2 gap-2">
-                            <Button
-                              onClick={() => {
-                                setLoading(true);
-                                append({ role: "user", content: "Generate insights for the data above." });
-                              }}
-                              disabled={loading}
-                              variant="outline"
-                              size="sm"
-                              className={cn(
-                                "flex items-center space-x-1 text-xs md:text-sm h-7 md:h-8 transition-all",
-                                "bg-[var(--color-bg-dark)] border border-neutral-700 text-[var(--color-text-light)] hover:bg-[var(--color-button-highlight)] hover:text-[var(--color-text-highlight)]"
-                              )}
-                            >
-                              {loading ? (
-                                <>
-                                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                                  Generating...
-                                </>
-                              ) : (
-                                <>
-                                  <Sparkles className="h-4 w-4 mr-1" />
-                                  Generate Insights
-                                </>
-                              )}
-                            </Button>
-                          </div>
+                           <ChatArtifacts 
+                             {...msg.artifacts} 
+                             insightsData={msg.artifacts.insightsData}
+                             isGeneratingInsights={insightsLoadingMap[index]}
+                             onGenerateInsights={() => handleGenerateInsights(index)}
+                           />
                         )}
                       </div>
                     ) : (
@@ -395,7 +445,7 @@ export default function Chat({ initialChatId, initialMessages }: { initialChatId
         </div>
 
         {/* Input Field for the user to Chat */}
-        <div className="sticky bottom-0 w-full px-4 pb-4 bg-[var(--color-bg-dark)] border-t border-neutral-800">
+        <div className="w-full max-w-4xl mx-auto px-4 py-2 bg-[var(--color-bg-dark)] border-t border-neutral-800">
           <AIInput
             input={input}
             handleInputChange={handleInputChange}

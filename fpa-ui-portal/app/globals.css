@@ -81,8 +81,8 @@
   --color-bg-light: #18181b;
   --color-text-light: #fff;
   --color-text-dark: #fff;
-  --color-text-highlight: #dc2626;
-  --color-button-highlight: #fecaca;
+  --color-text-highlight: #5591B7;
+  --color-button-highlight: #003A69;
 }
 
 @layer base {
@@ -98,5 +98,31 @@
     @apply bg-background text-foreground;
     background: #18181b;
     color: #f3f4f6;
+  }
+
+  /* Modern Scrollbar Styling */
+  /* Webkit browsers (Chrome, Safari, Edge) */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle white for dark mode */
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3); /* More visible on hover */
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
   }
 }

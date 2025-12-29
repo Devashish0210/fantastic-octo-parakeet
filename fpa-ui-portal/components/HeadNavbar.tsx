@@ -11,18 +11,19 @@ const STATIC_COPILOT_URL = process.env.NEXT_PUBLIC_BASE_PATH;
 const AppTopNavbar = ({ isAuthenticated = true }: { isAuthenticated?: boolean }) => {
 
   return (
-    <header className="shrink-0 p-4 border-b border-zinc-800 bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)]">
+    <header className="shrink-0 border-b border-zinc-800 bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {isAuthenticated}
           <Image
-              src={`${STATIC_COPILOT_URL}/images/MIA-Finance.png`}
+              src={`${STATIC_COPILOT_URL}/images/mia.png`}
               alt="FPA Intelligeni Logo"
-              width={300}
-              height={300}
-              className="-mt-1 h-6 w-20"
+              width={140}
+              height={40}
+              className="h-10 w-auto object-contain"
+              priority
             />
-          <span className="text-md px-2 py-0.5 rounded-md bg-zinc-700 text-[var(--color-text-light)]">FPA Chatbot</span>
+          <span className="text-md px-2 py-0.5 rounded-md bg-zinc-700 text-[var(--color-text-light)]">Finance</span>
         </div>
       </div>
     </header>

@@ -52,11 +52,11 @@ export default async function RootLayout({
               {!!session && (<AppSidebar />)}
 
                 <SidebarInset>
-                  <div className="min-h-screen flex flex-col w-full">
+                  <div className="h-screen overflow-hidden flex flex-col w-full">
                     {/* Top Navbar */}
                     <AppTopNavbar isAuthenticated={!!session} />
                     {/* Main content area */}
-                    <main className="flex-1 w-full">{children}</main>
+                    <main className="flex-1 w-full overflow-y-auto">{children}</main>
                     {/* Toaster to display alerts or messages */}
                     <Toaster />
                   </div>
