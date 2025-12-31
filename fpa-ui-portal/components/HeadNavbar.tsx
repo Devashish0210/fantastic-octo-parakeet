@@ -1,6 +1,6 @@
 "use client";
 
-// import necessary modules and components
+// Import necessary modules and components
 import React from 'react'
 import Image from 'next/image'
 import { SidebarToggle } from './SiderbarToggle'
@@ -11,8 +11,8 @@ const STATIC_COPILOT_URL = process.env.NEXT_PUBLIC_BASE_PATH;
 const AppTopNavbar = ({ isAuthenticated = true }: { isAuthenticated?: boolean }) => {
 
   return (
-    <header className="shrink-0 border-b border-zinc-800 bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)]">
-      <div className="flex items-center justify-between">
+    <header className="shrink-0 h-14 flex items-center px-4 border-b border-zinc-800 bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)]">
+      <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-2">
           {isAuthenticated}
           <Image
@@ -20,7 +20,7 @@ const AppTopNavbar = ({ isAuthenticated = true }: { isAuthenticated?: boolean })
               alt="FPA Intelligeni Logo"
               width={140}
               height={40}
-              className="h-10 w-auto object-contain"
+              className="h-7 w-auto object-contain"
               priority
             />
           <span className="text-md px-2 py-0.5 rounded-md bg-zinc-700 text-[var(--color-text-light)]">Finance</span>

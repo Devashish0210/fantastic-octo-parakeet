@@ -387,7 +387,7 @@ export default function Chat({ initialChatId, initialMessages }: { initialChatId
                 <div className={cn("flex items-start", msg.role === "user" ? "max-w-[80%] flex-row-reverse" : "w-[90%] flex-row")}>
                   <div
                     className={cn(
-                      "p-2 md:p-3 rounded-2xl text-sm md:text-base break-words w-full",
+                      "p-2 md:p-3 rounded-2xl text-sm md:text-base break-words w-full overflow-hidden",
                       msg?.role === "user"
                         ? "bg-[var(--color-button-highlight)] text-white rounded-tl-none"
                         : "bg-neutral-800 text-[var(--color-text-light)]"

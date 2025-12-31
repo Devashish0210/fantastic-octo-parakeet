@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart, Table, Code, Lightbulb, Sparkles, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import DataTable from "./DataTable";
@@ -94,7 +95,7 @@ export default function ChatArtifacts({
   };
 
   return (
-    <div className="w-full mt-4 border rounded-lg p-3 border-neutral-700 bg-neutral-900">
+    <div className="w-full max-w-full mt-4 border rounded-lg p-3 border-neutral-700 bg-neutral-900">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-4 mb-2 bg-neutral-800">
           <TabsTrigger
@@ -143,7 +144,18 @@ export default function ChatArtifacts({
         </TabsList>
 
         <div className="flex-grow overflow-auto border rounded-lg p-3 border-neutral-700 bg-neutral-900 max-h-[500px]">
-          {renderContent()}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              transition={{ duration: 0.2 }}
+              className="w-full h-full"
+            >
+              {renderContent()}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </Tabs>
     </div>

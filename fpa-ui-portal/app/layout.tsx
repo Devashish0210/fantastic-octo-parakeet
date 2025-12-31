@@ -27,7 +27,7 @@ const geistMono = Geist_Mono({
 
 // Metadata for the application
 export const metadata: Metadata = {
-  title: "Microland's FPA Portal",
+  title: "MIA Finance",
   description: "Microland's FPA Portal built with Next.js",
 };
 

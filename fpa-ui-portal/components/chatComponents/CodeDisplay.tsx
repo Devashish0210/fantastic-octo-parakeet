@@ -56,14 +56,16 @@ export default function CodeDisplay({ sqlQuery }: CodeDisplayProps) {
           )}
         </Button>
       </div>
-      <CardContent>
-        <SyntaxHighlighter
-          language="sql"
-          style={dracula}
-          className="rounded-md"
-        >
-          {sqlQuery}
-        </SyntaxHighlighter>
+      <CardContent className="max-w-full overflow-hidden">
+        <div className="grid w-full max-w-full overflow-x-auto rounded-md">
+          <SyntaxHighlighter
+            language="sql"
+            style={dracula}
+            customStyle={{ margin: 0, width: "100%", minWidth: 0 }}
+          >
+            {sqlQuery}
+          </SyntaxHighlighter>
+        </div>
       </CardContent>
     </motion.div>
   );

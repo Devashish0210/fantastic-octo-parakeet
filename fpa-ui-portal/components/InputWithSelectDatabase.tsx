@@ -78,7 +78,7 @@ export const AIInput = ({
                             onKeyDown={(e) => {
                                 if (e.key === "Enter" && !e.shiftKey) {
                                     e.preventDefault();
-                                    if (!isLoading) onSubmit();
+                                    if (!isLoading) onSubmit(e as unknown as FormEvent);
                                     adjustHeight(true);
                                 }
                             }}
